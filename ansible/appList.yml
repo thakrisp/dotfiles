@@ -50,7 +50,7 @@ casks:
 - "android-studio"
 - "fleet"
 
-Mac_only_casks:
+mac_only_casks:
 - "notion"
 - "hiddenbar"
 - "jordanbaird-ice"
