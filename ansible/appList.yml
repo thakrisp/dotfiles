@@ -1,0 +1,68 @@
+formulas:
+- "git"
+- "fzf"
+- "neovim"
+- "sqlite"
+- "tmux"
+- "turso"
+- "pnpm"
+- "python@3.13"
+- "twitch-cli"
+- "zsh-syntax-highlght"
+- "ripgrep"
+- "postgresql@15"
+- "go"
+- "node"
+- "docker"
+- "firebase-cli"
+- "nvm"
+- "pyenv"
+- "lazygit"
+- "lazydocker"
+- "jq"
+- "yq"
+- "fd"
+
+casks:
+- "ghostty"
+- "warp"
+- "wave"
+
+- "google-chrome"
+- "firefox"
+- "brave-browser"
+
+- "miniforge"
+- "github"
+- "flameshot"
+- "bitwarden"
+- "joplin"
+
+- "google-cloud-sdk"
+- "visual-studio-code"
+- "arduino-ide"
+- "cursor"
+- "zed"
+- "insomnia"
+
+- "jetbrains-toolbox"
+- "intellij-idea"
+- "webstorm"
+- "android-studio"
+- "fleet"
+
+Mac_only_casks:
+- "notion"
+- "hiddenbar"
+- "jordanbaird-ice"
+- "rectangle"
+- "raycast"
+- "iterm2"
+
+- "devtoys"
+
+- "google-drive"
+- "autodesk-fusion"
+
+- "affinity-designer"
+- "affinity-photo"

@@ -1,0 +1,65 @@
+---
+- name: Install Applications Based on OS
+  hosts: localhost
+  connection: local
+
+  vars_files:
+    - appList.yml
+
+  vars:
+    log_filename: "install_log_{{ ansible_date_time.date }}.txt"
+
+  tasks:
+    # --- macOS Automated Path ---
+    - name: "Install all software on macOS"
+      when: ansible_os_family == "Darwin"
+      block:
+        - name: "Install Homebrew formulas on macOS"
+          community.general.homebrew:
+            name: "{{ formulas }}"
+            state: present
+        - name: "Install Homebrew casks on macOS"
+          community.general.homebrew_cask:
+            name: "{{ casks + mac_only_casks }}"
+            state: present
+
+    # --- Linux Path ---
+    - name: "Process software on Linux"
+      when: ansible_os_family != "Darwin"
+      block:
+        - name: "Install Homebrew formulas on Linux"
+          community.general.homebrew:
+            name: "{{ formulas }}"
+            state: present
+
+        - name: "Run interactive session for GUI applications"
+          when: not is_ci_run | default(false) | bool
+          block:
+            - name: "Initialize log file for interactive session"
+              ansible.builtin.copy:
+                content: "Installation Log for {{ ansible_date_time.date }}\n----------------------------------------\n"
+                dest: "{{ log_filename }}"
+                force: yes
+
+            - name: "Start interactive session for cross-platform GUI apps"
+              ansible.builtin.debug:
+                msg: "Starting interactive install for Cross-Platform GUI Apps..."
+              when: casks is defined and casks | length > 0
+
+            - name: "Loop through casks for interactive install"
+              ansible.builtin.include_tasks: "tasks/interactive_install_loop.yml"
+              loop: "{{ casks }}"
+              loop_control:
+                loop_var: app_name
+              when: casks is defined
+
+            - name: "Log skipped Mac-only casks"
+              ansible.builtin.lineinfile:
+                path: "{{ log_filename }}"
+                line: "[ℹ️] {{ item }} - Skipped (macOS only application)"
+              loop: "{{ mac_only_casks }}"
+              when: mac_only_casks is defined
+
+            - name: "Show final completion message"
+              ansible.builtin.debug:
+                msg: "Interactive session complete. Results saved to {{ log_filename }}"

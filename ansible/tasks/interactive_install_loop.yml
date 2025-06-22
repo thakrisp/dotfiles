@@ -1,0 +1,66 @@
+---
+# This file is executed once for each application in the `casks_list`.
+# The application's name is available as the 'app_name' variable.
+
+- name: "Prompt for action on '{{ app_name }}'"
+  # The 'pause' module is the key to making Ansible interactive.
+  # It stops the playbook and waits for user input.
+  ansible.builtin.pause:
+    prompt: "\n-------------------\n  Processing GUI App: {{ app_name }}\n-------------------\nChoose an action: (i)nstall, (s)kip, or mark as (d)one"
+  # We 'register' the user's typed response into a variable called 'user_action'.
+  register: user_action
+
+# This 'block' groups all the logic for handling the user's choice.
+# The 'rescue' part ensures that if the user's command fails badly,
+# we can still log it as a failure.
+- name: "Handle user choice for '{{ app_name }}'"
+  block:
+    # This task only runs if the user chose 'i' for install.
+    - name: "Get install command from user"
+      when: user_action.user_input | lower == 'i'
+      ansible.builtin.pause:
+        prompt: "  Enter the command to install '{{ app_name }}'"
+      register: install_command
+
+    # This task also only runs if the user chose 'i' AND they actually entered a command.
+    - name: "Execute install command"
+      when: user_action.user_input | lower == 'i' and install_command.user_input is defined and install_command.user_input != ""
+      ansible.builtin.shell: "{{ install_command.user_input }}"
+      register: command_result # Register the success/failure of the command.
+
+    # --- LOGGING THE OUTCOME ---
+
+    # Log a successful installation.
+    - name: "Log successful installation"
+      ansible.builtin.lineinfile:
+        path: "{{ log_filename }}"
+        line: "[✅] {{ app_name }} - Installed"
+      when: user_action.user_input | lower == 'i' and command_result is defined and command_result.rc == 0
+
+    # Log a failed installation.
+    - name: "Log failed installation"
+      ansible.builtin.lineinfile:
+        path: "{{ log_filename }}"
+        line: "[❌] {{ app_name }} - Install command failed"
+      when: user_action.user_input | lower == 'i' and command_result is defined and command_result.rc != 0
+
+  rescue:
+    # This runs if the 'shell' command itself errors out.
+    - name: "Log installation failure (critical error)"
+      ansible.builtin.lineinfile:
+        path: "{{ log_filename }}"
+        line: "[❌] {{ app_name }} - Install command failed critically"
+
+# This task runs ONLY if the user chose 'd' for done.
+- name: "Log 'done' status"
+  ansible.builtin.lineinfile:
+    path: "{{ log_filename }}"
+    line: "[✅] {{ app_name }} - Marked as installed"
+  when: user_action.user_input | lower == 'd'
+
+# This task runs ONLY if the user chose 's' for skip.
+- name: "Log 'skipped' status"
+  ansible.builtin.lineinfile:
+    path: "{{ log_filename }}"
+    line: "[↪️] {{ app_name }} - Skipped by user"
+  when: user_action.user_input | lower == 's'

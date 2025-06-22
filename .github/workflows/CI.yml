@@ -1,0 +1,39 @@
+# Name of your GitHub Actions workflow.
+name: CI
+
+# This section defines when the workflow will run.
+on:
+  # Run on every push to the 'main' or 'master' branch.
+  push:
+    branches: [ "main", "master" ]
+  # Also run on every pull request that targets the main branch.
+  pull_request:
+    branches: [ "main", "master" ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel.
+jobs:
+  # We'll define a single job called "test-setup".
+  test-setup:
+    # This is the key! The matrix strategy tells GitHub to run this job multiple times,
+    # once for each item in the 'os' list.
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    # This selects the virtual machine based on the current value from the matrix.
+    # It will run once on 'ubuntu-latest' and once on 'macos-latest'.
+    runs-on: ${{ matrix.os }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job.
+    steps:
+      # Step 1: "copy the repo to the action"
+      # This uses the official 'checkout' action to get your code into the runner.
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      # Step 2: "call the script with --CI"
+      # This runs your bootstrap script. The 'shell: bash' is good practice.
+      # The --CI flag is passed here to trigger the non-interactive path in your script.
+      - name: Run bootstrap script in CI mode
+        run: bash bootstrap.sh --CI
+        shell: bash
