@@ -10,7 +10,7 @@ step() {
 }
 
 step "🔧 SETTING UP CONFIGURATION"
-DOTFILES_REPO="https://github.com/yourusername/dotfiles.git"
+DOTFILES_REPO="https://github.com/thakrisp/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles" # Permanent location
 
 DOTFILES_REPO="$DEFAULT_DOTFILES_REPO"
