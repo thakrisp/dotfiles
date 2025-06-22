@@ -32,6 +32,11 @@
             name: "{{ formulas }}"
             state: present
 
+        - name: "Notify that interactive session will be skipped"
+          ansible.builtin.debug:
+            msg: "SKIPPING interactive GUI app installation because this is a CI run."
+          when: is_ci_run | default(false) | bool
+
         - name: "Run interactive session for GUI applications"
           when: not is_ci_run | default(false) | bool
           block:

@@ -73,5 +73,5 @@
         creates: "{{ ansible_env.HOME }}/.pyenv"
       changed_when: true
 
-    - name: "Import the application installation playbook"
-      ansible.builtin.import_playbook: install_apps.yml
+- name: "Import the application installation playbook"
+  ansible.builtin.import_playbook: install_apps.yml

@@ -46,7 +46,13 @@ echo "Dotfiles Repository: $DOTFILES_REPO"
 if [[ "$IS_TEST_RUN" == "true" ]]; then
   echo "Mode: 🧪 TEST RUN (check mode, no changes will be made)"
   # Add Ansible's check and diff flags for a dry run
-  ANSIBLE_EXTRA_ARGS="--check --diff"
+  ANSIBLE_EXTRA_ARGS="$ANSIBLE_EXTRA_ARGS --check --diff"
+fi
+
+if [[ "$IS_CI_RUN" == "false" ]]; then
+  ANSIBLE_EXTRA_ARGS="$ANSIBLE_EXTRA_ARGS --ask-become-pass"
+else
+  echo "Mode: 🤖 CI RUN (non-interactive, no password prompts)"
 fi
 
 # --- Install Homebrew ---
@@ -99,7 +105,6 @@ step "🚀 Handing off to Ansible..."
 cd "$DOTFILES_DIR"
 # --ask-become-pass prompts for your sudo password, needed for tasks like changing the shell.
 ansible-playbook ansible/playbook.yml \
-  # --ask-become-pass \ #not needed as github uses passwordless sudo
   -e "dotfiles_repo=$DOTFILES_REPO" \
   -e "is_test_run=$IS_TEST_RUN" \
   -e "is_ci_run=$IS_CI_RUN" \
