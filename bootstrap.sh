@@ -123,6 +123,7 @@ ansible-playbook ansible/playbook.yml \
 step "🎉 Bootstrap complete! Ansible has finished."
 #TODO: automate nerdfont install.
 #TODO: Look into ansible roles.
+#TODO: Fix Turso install script (Currently in appList.yml as tap:).
 echo ""
 echo "----------------------------------------"
 echo "  Manual Steps left to do "

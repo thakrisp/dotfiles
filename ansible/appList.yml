@@ -4,7 +4,6 @@ formulas:
 - "neovim"
 - "sqlite"
 - "tmux"
-- "tursodatabase/tap/turso"
 - "pnpm"
 - "python@3.13"
 - "twitch-cli"
@@ -66,3 +65,6 @@ Mac_only_casks:
 
 - "affinity-designer"
 - "affinity-photo"
+
+tap:
+- "tursodatabase/tap/turso"
