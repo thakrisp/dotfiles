@@ -7,7 +7,7 @@ formulas:
 - "pnpm"
 - "python@3.13"
 - "twitch-cli"
-- "zsh-syntax-highlght"
+- "zsh-syntax-highlghting"
 - "ripgrep"
 - "postgresql@15"
 - "go"
