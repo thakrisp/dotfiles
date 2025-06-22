@@ -4,7 +4,7 @@ formulas:
 - "neovim"
 - "sqlite"
 - "tmux"
-- "turso"
+- "tursodatabase/tap/turso"
 - "pnpm"
 - "python@3.13"
 - "twitch-cli"
