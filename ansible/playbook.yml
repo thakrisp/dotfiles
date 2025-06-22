@@ -52,11 +52,11 @@
       ansible.builtin.git:
         repo: "{{ item.repo }}"
         dest: "{{ config_dir }}/{{ item.dest }}"
-        version: main
+        version: "{{ item.branch | default('main') }}"
       loop:
         - { repo: 'https://github.com/LazyVim/starter', dest: 'LazyVim' }
         - { repo: 'https://github.com/NvChad/starter', dest: 'NvChad' }
-        - { repo: 'https://github.com/nvim-lua/kickstart.nvim.git', dest: 'KickstartNVIM' }
+        - { repo: 'https://github.com/nvim-lua/kickstart.nvim.git', dest: 'KickstartNVIM', branch: "master" }
 
     - name: "Install NVM (Node Version Manager)"
       ansible.builtin.shell:

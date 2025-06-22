@@ -33,11 +33,21 @@ show_help() {
 while [[ $# -gt 0 ]]; do
   key="$1"
   case $key in
-    --repo) DOTFILES_REPO="$2" shift; shift ;;
-    --test) IS_TEST_RUN="true"; shift ;;
-    --CI) IS_CI_RUN="true" shift ;;
-    -h|--help) show_help exit 0 ;;
-    *) echo "Unknown option: $1"; show_help; exit 1 ;;
+  --repo)
+    DOTFILES_REPO="$2" shift
+    shift
+    ;;
+  --test)
+    IS_TEST_RUN="true"
+    shift
+    ;;
+  --CI) IS_CI_RUN="true" shift ;;
+  -h | --help) show_help exit 0 ;;
+  *)
+    echo "Unknown option: $1"
+    show_help
+    exit 1
+    ;;
   esac
 done
 
@@ -58,15 +68,15 @@ fi
 # --- Install Homebrew ---
 # Idempotent: checks if brew command exists before trying to install.
 step "❗ Checking Homebrew Installation"
-if ! command -v brew &> /dev/null; then
+if ! command -v brew &>/dev/null; then
   echo "🍺 Homebrew not found. Installing..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  
+
   # Add Homebrew to this script's PATH to use it immediately
   if [[ -x "/opt/homebrew/bin/brew" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   elif [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
-     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   fi
 else
   echo "✅ Homebrew is already installed."
@@ -75,16 +85,16 @@ fi
 # --- Install Git ---
 # Ansible needs Git to clone repositories, so we ensure it's here.
 step "❗ Checking Git Installation"
-if ! command -v git &> /dev/null; then
-    echo "📦 Git not found. Installing via Homebrew..."
-    brew install git
+if ! command -v git &>/dev/null; then
+  echo "📦 Git not found. Installing via Homebrew..."
+  brew install git
 else
-    echo "✅ Git is already installed."
+  echo "✅ Git is already installed."
 fi
 
 # --- Install Ansible ---
 step "❗ Checking Ansible Installation"
-if ! command -v ansible &> /dev/null; then
+if ! command -v ansible &>/dev/null; then
   echo "🤖 Ansible not found. Installing via Homebrew..."
   brew install ansible
 else
@@ -111,4 +121,13 @@ ansible-playbook ansible/playbook.yml \
   $ANSIBLE_EXTRA_ARGS
 
 step "🎉 Bootstrap complete! Ansible has finished."
-echo "Please restart your terminal to apply all changes.
+#TODO: automate nerdfont install.
+#TODO: Look into ansible roles.
+echo ""
+echo "----------------------------------------"
+echo "  Manual Steps left to do "
+echo "----------------------------------------"
+echo "⚠️⚠️DONT FORGET TO INSTALL JetBrainsMono Nerd Font⚠️⚠️"
+echo ""
+echo "-> Restart your terminal to ensure all changes take effect."
+echo ""
