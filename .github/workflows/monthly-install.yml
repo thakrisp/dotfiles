@@ -1,0 +1,22 @@
+name: Monthly
+
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+
+jobs:
+  test-setup:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Run bootstrap script in CI mode
+        run: bash bootstrap.sh --CI --test
+        shell: bash
