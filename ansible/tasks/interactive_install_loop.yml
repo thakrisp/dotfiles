@@ -3,11 +3,17 @@
 # The application's name is available as the 'app_name' variable.
 
 - name: "Prompt for action on '{{ app_name }}'"
-  # The 'pause' module is the key to making Ansible interactive.
-  # It stops the playbook and waits for user input.
   ansible.builtin.pause:
-    prompt: "\n-------------------\n  Processing GUI App: {{ app_name }}\n-------------------\nChoose an action: (i)nstall, (s)kip, or mark as (d)one"
-  # We 'register' the user's typed response into a variable called 'user_action'.
+    prompt: |
+      -------------------
+        Processing GUI App: {{ app_name }}
+      -------------------
+      Choose an action:
+        (i) - Install with a custom command
+        (s) - Skip this application for now
+        (d) - Done (mark as already installed)
+      
+      Your choice
   register: user_action
 
 # This 'block' groups all the logic for handling the user's choice.
@@ -35,6 +41,8 @@
       ansible.builtin.lineinfile:
         path: "{{ log_filename }}"
         line: "[✅] {{ app_name }} - Installed"
+        create: yes
+        mode: '0644'
       when: user_action.user_input | lower == 'i' and command_result is defined and command_result.rc == 0
 
     # Log a failed installation.
@@ -42,6 +50,8 @@
       ansible.builtin.lineinfile:
         path: "{{ log_filename }}"
         line: "[❌] {{ app_name }} - Install command failed"
+        create: yes
+        mode: '0644'
       when: user_action.user_input | lower == 'i' and command_result is defined and command_result.rc != 0
 
   rescue:
@@ -50,12 +60,16 @@
       ansible.builtin.lineinfile:
         path: "{{ log_filename }}"
         line: "[❌] {{ app_name }} - Install command failed critically"
+        create: yes
+        mode: '0644'
 
 # This task runs ONLY if the user chose 'd' for done.
 - name: "Log 'done' status"
   ansible.builtin.lineinfile:
     path: "{{ log_filename }}"
     line: "[✅] {{ app_name }} - Marked as installed"
+    create: yes
+    mode: '0644'
   when: user_action.user_input | lower == 'd'
 
 # This task runs ONLY if the user chose 's' for skip.
@@ -63,4 +77,6 @@
   ansible.builtin.lineinfile:
     path: "{{ log_filename }}"
     line: "[↪️] {{ app_name }} - Skipped by user"
+    create: yes
+    mode: '0644'
   when: user_action.user_input | lower == 's'

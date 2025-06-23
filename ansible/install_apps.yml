@@ -62,6 +62,8 @@
           ansible.builtin.lineinfile:
             path: "{{ log_filename }}"
             line: "[ℹ️] {{ item }} - Skipped (macOS only application)"
+            create: yes
+            mode: '0644'
           loop: "{{ mac_only_casks }}"
           when: mac_only_casks is defined
 
