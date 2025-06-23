@@ -35,5 +35,5 @@ jobs:
       # This runs your bootstrap script. The 'shell: bash' is good practice.
       # The --CI flag is passed here to trigger the non-interactive path in your script.
       - name: Run bootstrap script in CI mode
-        run: bash bootstrap.sh --CI
+        run: bash bootstrap.sh --CI --test
         shell: bash
