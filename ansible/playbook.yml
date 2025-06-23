@@ -14,6 +14,7 @@
           - "playbook started at {{ ansible_date_time.iso8601 }}"
           - "Dotfiles Repo: {{ dotfiles_repo }}"
           - "Test Mode: {{ is_test_run }}"
+          - "CI Mode: {{ is_ci_run }}"
 
     - name: "Install Zsh via Homebrew"
       community.general.homebrew:

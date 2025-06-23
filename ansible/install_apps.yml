@@ -32,6 +32,12 @@
             name: "{{ formulas }}"
             state: present
 
+        - name: "Initialize log file for interactive session"
+          ansible.builtin.copy:
+            content: "Installation Log for {{ ansible_date_time.date }}\n----------------------------------------\n"
+            dest: "{{ log_filename }}"
+            force: yes
+
         - name: "Notify that interactive session will be skipped"
           ansible.builtin.debug:
             msg: "SKIPPING interactive GUI app installation because this is a CI run."
@@ -40,12 +46,6 @@
         - name: "Run interactive session for GUI applications"
           when: not is_ci_run | default(false) | bool
           block:
-            - name: "Initialize log file for interactive session"
-              ansible.builtin.copy:
-                content: "Installation Log for {{ ansible_date_time.date }}\n----------------------------------------\n"
-                dest: "{{ log_filename }}"
-                force: yes
-
             - name: "Start interactive session for cross-platform GUI apps"
               ansible.builtin.debug:
                 msg: "Starting interactive install for Cross-Platform GUI Apps..."
@@ -58,13 +58,13 @@
                 loop_var: app_name
               when: casks is defined
 
-            - name: "Log skipped Mac-only casks"
-              ansible.builtin.lineinfile:
-                path: "{{ log_filename }}"
-                line: "[ℹ️] {{ item }} - Skipped (macOS only application)"
-              loop: "{{ mac_only_casks }}"
-              when: mac_only_casks is defined
+        - name: "Log skipped Mac-only casks"
+          ansible.builtin.lineinfile:
+            path: "{{ log_filename }}"
+            line: "[ℹ️] {{ item }} - Skipped (macOS only application)"
+          loop: "{{ mac_only_casks }}"
+          when: mac_only_casks is defined
 
-            - name: "Show final completion message"
-              ansible.builtin.debug:
-                msg: "Interactive session complete. Results saved to {{ log_filename }}"
+        - name: "Show final completion message"
+          ansible.builtin.debug:
+            msg: "Interactive session complete. Results saved to {{ log_filename }}"
